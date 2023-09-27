@@ -1,0 +1,188 @@
+---
+title: "John Spaeth's CV"
+author: John Spaeth
+date: "`r Sys.Date()`"
+output:
+  pagedown::html_resume:
+    css: ['css/styles.css', 'resume']
+    # set it to true for a self-contained HTML page but it'll take longer to render
+    self_contained: true
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  results='asis', 
+  echo = FALSE
+)
+
+library(glue)
+library(tidyverse)
+
+# Set this to true to have links turned into footnotes at the end of the document
+PDF_EXPORT <- FALSE
+
+# Holds all the links that were inserted for placement at the end
+links <- c()
+
+source('parsing_functions.R')
+
+# Load csv with position info
+position_data <- read_csv('positions.csv')
+```
+
+
+```{r}
+# When in export mode the little dots are unaligned, so fix that. 
+if(PDF_EXPORT){
+  cat("
+  <style>
+  :root{
+    --decorator-outer-offset-left: -6.5px;
+  }
+  </style>")
+}
+```
+
+
+Aside
+================================================================================
+
+
+![logo](beta_dist.png){width=100%}
+
+```{r}
+# When in export mode the little dots are unaligned, so fix that. 
+#if(PDF_EXPORT){
+#  cat("View this CV online with links at _nickstrayer.me/cv_")
+#} else {
+#  cat("[<i class='fas fa-download'></i> Download a PDF of this CV](https://github.com/jjspaeth/cv/spaeth_cv.pdf)")
+#}
+```
+
+Contact {#contact}
+--------------------------------------------------------------------------------
+
+
+- <i class="fa fa-envelope"></i> jjspaeth@asu.edu
+- <i class="fa fa-github"></i> github.com/jjspaeth
+- <i class="fa fa-linkedin"></i> linkedin.com/in/john-j-spaeth/
+
+
+
+Language Skills {#skills}
+--------------------------------------------------------------------------------
+
+```{r}
+skills <- tribble(
+  ~skill,               ~level,
+  "R",                  2,
+  "SQL",                1,
+)
+
+build_skill_bars(skills)
+```
+
+
+Disclaimer {#disclaimer}
+--------------------------------------------------------------------------------
+
+Made with the R package [**pagedown**](https://github.com/rstudio/pagedown). 
+
+The source code is available at [github.com/nstrayer/cv](https://github.com/nstrayer/cv).
+
+Last updated on `r Sys.Date()`.
+
+
+
+
+Main
+================================================================================
+
+John Spaeth {#title}
+--------------------------------------------------------------------------------
+
+
+```{r}
+intro_text <- "I have a degree in Chemistry (ACS Certified) from California State University, Bakersfield and I am an 
+ eight-year Army veteran. I developed analytical and critical thinking skills as an undergraduate 
+ research assistant and I employ them on a daily basis as a quality assurance specialist for the U.S. Air 
+ Force. I look forward to the opportunity to continue serving my country while developing 
+ professionally."
+
+cat(sanitize_links(intro_text))
+```
+
+
+
+Education {data-icon=graduation-cap data-concise=true}
+--------------------------------------------------------------------------------
+
+```{r}
+print_section(position_data, 'education')
+```
+
+
+
+Research Experience {data-icon=laptop}
+--------------------------------------------------------------------------------
+
+```{r}
+print_section(position_data, 'research_positions')
+```
+
+
+
+Industry Experience {data-icon=suitcase}
+--------------------------------------------------------------------------------
+
+```{r}
+print_section(position_data, 'industry_positions')
+```
+
+<br>
+<br>
+<br>
+
+Teaching Experience {data-icon=chalkboard-teacher}
+--------------------------------------------------------------------------------
+
+::: aside
+I am passionate about education. I believe that no topic is too complex if the teacher is empathetic and willing to think about new methods of approaching task. 
+:::
+
+```{r}
+print_section(position_data, 'teaching_positions')
+```
+
+
+Awards  {data-icon=award}
+--------------------------------------------------------------------------------
+
+::: aside
+I regularly blog about data science and visualization on my blog [Data Analyst John Spaeth.](https://jjspaeth.github.io/blog/)
+:::
+
+```{r}
+print_section(position_data, 'awards')
+```
+
+
+```{r}
+if(PDF_EXPORT){
+  cat("
+  
+Links {data-icon=link}
+--------------------------------------------------------------------------------
+
+<br>
+
+
+")
+  
+  walk2(links, 1:length(links), function(link, index){
+    print(glue('{index}. {link}'))
+  })
+}
+```
+
+
